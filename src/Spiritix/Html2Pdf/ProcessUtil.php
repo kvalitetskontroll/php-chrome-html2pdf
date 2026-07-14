@@ -41,14 +41,23 @@ class ProcessUtil
     /**
      * Executes a shell command.
      *
-     * @param string $command The command to be executed
-     * @param string $input   The data to be provided through the input stream
+     * @param string      $command The command to be executed
+     * @param string      $input   The data to be provided through the input stream
+     * @param string|null $cwd     The working directory to run the command in (defaults to the calling
+     *                             process' cwd if null)
+     * @param array|null  $env     Additional/overriding environment variables, merged on top of the
+     *                             current environment (current environment is preserved if null)
      *
      * @return array
      */
-    public static function executeShellCommand(string $command, string $input = ''): array
+    public static function executeShellCommand(string $command, string $input = '', ?string $cwd = null, ?array $env = null): array
     {
         $result = [];
+
+        $envVars = null;
+        if ($env !== null) {
+            $envVars = array_merge(getenv(), $env);
+        }
 
         $proc = proc_open(
             $command,
@@ -57,7 +66,9 @@ class ProcessUtil
                 1 => ['pipe', 'w'],
                 2 => ['pipe', 'w'],
             ],
-            $pipes
+            $pipes,
+            $cwd,
+            $envVars
         );
 
         fwrite($pipes[0], $input);

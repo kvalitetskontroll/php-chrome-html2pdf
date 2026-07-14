@@ -265,7 +265,15 @@ class Converter
      */
     public function convert(): OutputInterface
     {
-        $result = ProcessUtil::executeShellCommand($this->buildCommand(), $this->input->getHtml());
+        $packageRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . '..';
+        $cacheDirectory = $packageRoot . DIRECTORY_SEPARATOR . '.cache' . DIRECTORY_SEPARATOR . 'puppeteer';
+
+        $result = ProcessUtil::executeShellCommand(
+            $this->buildCommand(),
+            $this->input->getHtml(),
+            $packageRoot,
+            ['PUPPETEER_CACHE_DIR' => $cacheDirectory]
+        );
 
         if (strpos(mb_strtolower($result['error']), 'error') !== false) {
             throw new ConverterException('Binary error: ' . $result['error']);
