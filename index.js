@@ -22,7 +22,10 @@ import Converter from './lib/Converter.js';
     const launchOptions = JSON.parse(program.opts().launchOptions);
 
     const converter = new Converter(await getStdin(), options, launchOptions);
-    const buffer = await converter.run();
+    const result = await converter.run();
 
-    process.stdout.write(buffer.toString('binary'), 'binary');
+    // page.pdf() may return a Buffer or a plain Uint8Array/TypedArray depending on the
+    // puppeteer version; normalize to a real Buffer so it's written out as raw binary
+    // rather than being coerced through a lossy string conversion.
+    process.stdout.write(Buffer.from(result));
 })();
