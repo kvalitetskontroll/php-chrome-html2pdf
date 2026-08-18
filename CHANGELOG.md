@@ -1,6 +1,8 @@
 # CHANGELOG
 
 ## [Unreleased]
+### Fixed
+- Fixed `timeout` option only applying to the PDF-rendering step (`page.pdf()`); it now also applies to the HTML-loading step (`page.setContent()`), which has its own independent 30s default and previously still timed out regardless of a custom `timeout` on large/heavy HTML
 
 ## [1.8.1] - 2024-09-05
 ### Fixed
