@@ -23,8 +23,43 @@ describe('Converter', () => {
 
     describe('run', () => {
         it('returns a buffer', async () => {
-            const converter = new Converter('<p>Hello</p>', {});
+            const converter = new Converter('<p>Hello</p>', {}, []);
             chai.expect(await converter.run()).to.be.instanceof(Buffer);
+        });
+    });
+
+    describe('_setHtml', () => {
+        it('passes a custom timeout through to page.setContent()', async () => {
+            const converter = new Converter('<p>Hello</p>', {});
+            let receivedOptions;
+            const fakePage = {
+                setContent: async (html, options) => {
+                    receivedOptions = options;
+                },
+            };
+
+            await converter._setHtml(fakePage, '<p>Hello</p>', {timeout: 900000});
+
+            chai.expect(receivedOptions).to.deep.equal({
+                waitUntil: ['load', 'networkidle0'],
+                timeout: 900000,
+            });
+        });
+
+        it('omits timeout from page.setContent() options when none was given', async () => {
+            const converter = new Converter('<p>Hello</p>', {});
+            let receivedOptions;
+            const fakePage = {
+                setContent: async (html, options) => {
+                    receivedOptions = options;
+                },
+            };
+
+            await converter._setHtml(fakePage, '<p>Hello</p>', {});
+
+            chai.expect(receivedOptions).to.deep.equal({
+                waitUntil: ['load', 'networkidle0'],
+            });
         });
     });
 
