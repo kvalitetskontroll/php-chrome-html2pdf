@@ -23,7 +23,7 @@ describe('Converter', () => {
 
     describe('run', () => {
         it('returns a buffer', async () => {
-            const converter = new Converter('<p>Hello</p>', {});
+            const converter = new Converter('<p>Hello</p>', {}, []);
             chai.expect(await converter.run()).to.be.instanceof(Buffer);
         });
     });
