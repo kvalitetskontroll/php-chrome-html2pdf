@@ -2,6 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
+- Fixed conversions of large documents (e.g. tens of MB of HTML with hundreds of inline base64 images) never finishing: `page.setContent()` + `networkidle0` could wait forever for a network-idle event Chromium had already emitted. The HTML is now loaded from a temporary file and the conversion waits for the `load` event
 - Fixed `timeout` option only applying to the PDF-rendering step (`page.pdf()`); it now also applies to the HTML-loading step (`page.setContent()`), which has its own independent 30s default and previously still timed out regardless of a custom `timeout` on large/heavy HTML
 
 ## [1.8.1] - 2024-09-05
